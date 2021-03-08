@@ -39,11 +39,9 @@ public class HelloController {
                     System.out.println(line);
                 }
 
-//                java.io.BufferedReader reader = request.getReader();
-//                String line = null;
-//                while((line = reader.readLine()) != null) {
-//                    System.out.println(line);
-//                }
+                String newBody2 = readTwiceHttpServletRequestWrapper.getBody();
+                System.out.println(newBody2);
+
             } catch(Exception e) {
                 System.out.println(e);
             }
