@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 @RestController
 public class HelloController {
@@ -20,15 +18,36 @@ public class HelloController {
     public String hello(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("Hello World");
 
-        MessageFactory messageFactory = MessageFactory.newInstance();
-        InputStream inStream = request.getInputStream();
-        SOAPMessage soapMessage = messageFactory.createMessage(new MimeHeaders(), inStream);
-//        PrintWriter writer = response.getWriter();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        soapMessage.writeTo(out);
-        String strMsg = new String(out.toByteArray());
-        System.out.println(strMsg);
-//        writer.println(strMsg);
+        String body = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
+
+        try {
+            InputStream inputStream = request.getInputStream();
+            if (inputStream != null) {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                char[] charBuffer = new char[128];
+                int bytesRead = -1;
+                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                    stringBuilder.append(charBuffer, 0, bytesRead);
+                }
+            } else {
+                stringBuilder.append("");
+            }
+        } catch (IOException ex) {
+            throw ex;
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    throw ex;
+                }
+            }
+        }
+
+        body = stringBuilder.toString();
+        System.out.println(body);
 
         return "hello";
     }
