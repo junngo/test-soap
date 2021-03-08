@@ -23,12 +23,12 @@ public class HelloController {
         MessageFactory messageFactory = MessageFactory.newInstance();
         InputStream inStream = request.getInputStream();
         SOAPMessage soapMessage = messageFactory.createMessage(new MimeHeaders(), inStream);
-        PrintWriter writer = response.getWriter();
+//        PrintWriter writer = response.getWriter();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         soapMessage.writeTo(out);
         String strMsg = new String(out.toByteArray());
         System.out.println(strMsg);
-        writer.println(strMsg);
+//        writer.println(strMsg);
 
         return "hello";
     }
