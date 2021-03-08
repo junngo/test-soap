@@ -27,14 +27,24 @@ public class HelloController {
 //        }
         // If there is anything in the body of the message, dump it to the screen as well
         if(request.getContentLength() > 0) {
-            try{
-                java.io.BufferedReader reader = request.getReader();
+            try {
+                ReadTwiceHttpServletRequestWrapper readTwiceHttpServletRequestWrapper = new ReadTwiceHttpServletRequestWrapper(
+                        (HttpServletRequest) request);
+
+                String newBody = readTwiceHttpServletRequestWrapper.getBody();
+                System.out.println(newBody);
+                java.io.BufferedReader reader = readTwiceHttpServletRequestWrapper.getReader();
                 String line = null;
                 while((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-            }
-            catch(Exception e) {
+
+//                java.io.BufferedReader reader = request.getReader();
+//                String line = null;
+//                while((line = reader.readLine()) != null) {
+//                    System.out.println(line);
+//                }
+            } catch(Exception e) {
                 System.out.println(e);
             }
         }
