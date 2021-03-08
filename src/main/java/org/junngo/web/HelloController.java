@@ -11,13 +11,34 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import java.io.*;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 @RestController
 public class HelloController {
 
+    public MimeHeaders getMIMEHeaders(HttpServletRequest request) {
+        MimeHeaders mimeHeaders = new MimeHeaders();
+        Enumeration enums = request.getHeaderNames();
+        while (enums.hasMoreElements()) {
+            String headerName = (String)enums.nextElement();
+            String headerValue = request.getHeader(headerName);
+            StringTokenizer st = new StringTokenizer(headerValue, ",");
+            System.out.println("HeaderName: " + headerName);
+            System.out.println("headerValue: " + headerValue);
+            System.out.println("st: " + st.toString());
+            System.out.println("==============================");
+            while (st.hasMoreTokens()) {
+                mimeHeaders.addHeader(headerName, st.nextToken().trim());
+            }
+        }
+        System.out.println("finish MimeHeaders");
+        return mimeHeaders;
+    }
+
     @RequestMapping("/callback")
     public String hello(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("Hello World");
+        MimeHeaders header = getMIMEHeaders(request);
 
         // Traverse the HTTP headers and show them on the screen
 //        for(Enumeration enum = request.getHeaderNames(); enum.hasMoreElements(); ) {
