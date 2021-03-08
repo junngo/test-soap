@@ -10,6 +10,7 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import java.io.*;
+import java.util.Enumeration;
 
 @RestController
 public class HelloController {
@@ -18,37 +19,28 @@ public class HelloController {
     public String hello(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("Hello World");
 
-        String body = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-
-        try {
-            InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
+        // Traverse the HTTP headers and show them on the screen
+//        for(Enumeration enum = request.getHeaderNames(); enum.hasMoreElements(); ) {
+//            String header = (String)enum.nextElement();
+//            String value  = request.getHeader(header);
+//            System.out.println("  " + header + " = " + value);
+//        }
+        // If there is anything in the body of the message, dump it to the screen as well
+        if(request.getContentLength() > 0) {
+            try{
+                java.io.BufferedReader reader = request.getReader();
+                String line = null;
+                while((line = reader.readLine()) != null) {
+                    System.out.println(line);
                 }
-            } else {
-                stringBuilder.append("");
             }
-        } catch (IOException ex) {
-            throw ex;
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    throw ex;
-                }
+            catch(Exception e) {
+                System.out.println(e);
             }
         }
+        response.setContentType("text/xml"); // Need this to prevent Apache SOAP from gacking
 
-        body = stringBuilder.toString();
-        System.out.println(body);
-
+        System.out.println("good!!!");
         return "hello";
     }
 }
